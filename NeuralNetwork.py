@@ -13,7 +13,7 @@ class NeuralNetwork:
 	def add_layer(self, Layer, *args, **kwargs):
 		self.layers.append(Layer(input_length = self.layers[-1].get_output_length(), *args, **kwargs))
 		
-	def train(self, Ytr, Xtr, Xva, Yva, batch_size=32, epochs=1):
+	def train(self, Xtr, Ytr, Xva, Yva, batch_size=32, epochs=1):
 		for epoch in range(epochs):
 			print("epoch #", epoch, ":")
 			random_indices = np.arange(len(Xtr))
