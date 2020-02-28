@@ -25,15 +25,15 @@ class NeuralNetwork:
 				prediction, inputs = self.forward_propagate(x_batch)
 				self.backward_propagate(y_batch, prediction, inputs)
 				batch_num += 1
-			Y_hat_tr, _ = self.predict(Xtr)
-			Y_hat_va, _ = self.predict(Xva)
+			Y_hat_tr = self.predict(Xtr)
+			Y_hat_va = self.predict(Xva)
 			print("\tTraining Accuracy: ", self.compute_acc(Ytr, Y_hat_tr))
 			print("\tValidation Accuracy: ", self.compute_acc(Yva, Y_hat_va))
 			print("\tTraining loss: ", self.compute_loss(Ytr, Y_hat_tr))
 			print("\tvalidation loss: ", self.compute_loss(Yva, Y_hat_va))
 	
 	def predict(self, predict_set):
-		return self.forward_propagate(predict_set)
+		return self.forward_propagate(predict_set)[0]
 		
 	def forward_propagate(self, propagate):
 		inputs = []

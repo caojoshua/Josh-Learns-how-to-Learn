@@ -1,7 +1,7 @@
 
 import numpy as np
 
-def derivative_approx(f, x, difference='', h=1e-5):
+def derivative_approx(f, x, difference='', h=1e-7):
 	"""
 	Approximates the derivative of a single variable function using the finite difference method.
 	
@@ -30,7 +30,7 @@ def derivative_approx(f, x, difference='', h=1e-5):
 	else:
 		return (forward_f - backward_f) / (2 * h)
 	
-def gradient_approx(f, x, difference='', h=1e-5):
+def gradient_approx(f, x, difference='', h=1e-7):
 	"""
 	Approximates gradient of a multivariable function using the finite difference method. 
 	
