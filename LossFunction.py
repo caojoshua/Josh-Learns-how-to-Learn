@@ -23,7 +23,7 @@ class MeanSquaredError(LossFunction):
 		return -2 * (y_true - y_hat) / len(y_true)
 		
 class CrossEntropy(LossFunction):
-	EPSILON = 1e-15
+	EPSILON = 1e-7
 	def __init__(self):
 		super().__init__
 		
@@ -35,7 +35,8 @@ class CrossEntropy(LossFunction):
 	def gradient(self, y_true, y_hat):
 		# TODO: find out why symbolic gradient is not performing well
 		return DerivativeApproximation.loss_gradient_approx(self.loss, y_true, y_hat)
-		y_hat = np.clip(y_hat, CrossEntropy.EPSILON, 1-CrossEntropy.EPSILON)
-		return -y_true/y_hat
+# 		y_hat /= np.expand_dims(y_hat.sum(axis=-1), axis=-1)
+# 		y_hat = np.clip(y_hat, CrossEntropy.EPSILON, 1-CrossEntropy.EPSILON)
+# 		return -y_true/y_hat
 		
 		
