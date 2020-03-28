@@ -53,13 +53,14 @@ def gradient_approx(f, x, difference='', h=1e-7):
 		for the nth sample and each column is the gradient wrt the mth variable
 		
 	Control Flow:
-		1. for each sample vector (M), duplicate it to a sample matrix (N, N)
+		1. for each sample vector (N), duplicate it to a sample matrix (N, N)
 		2. add h to each diagonal, which will allow us to compute the gradient wrt each variable
 		3. compute the finite difference gradient estimate against each row of the sample matrices,
 			shrinking the (N,N) matrix to (N)
 	"""
 
 	# setup up proper repeats/dimensions
+	x = x.copy()
 	x = np.expand_dims(x, axis=-2)
 	x_forward = x.copy()
 	x_forward = x_forward.repeat(repeats=x_forward.shape[-1], axis=-2)

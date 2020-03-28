@@ -5,13 +5,13 @@ import numpy as np
 from sklearn import metrics
 
 class NeuralNetwork:
-	def __init__(self, input_length = 0, loss=LossFunction.MeanSquaredError(), lr=0.01):
-		self.layers = [Layer.InputLayer(input_length)]
+	def __init__(self, input_shape = 0, loss=LossFunction.MeanSquaredError(), lr=0.01):
+		self.layers = [Layer.InputLayer(input_shape)]
 		self.loss = loss
 		self.lr = lr
 		
 	def add_layer(self, Layer, *args, **kwargs):
-		self.layers.append(Layer(input_length = self.layers[-1].get_output_length(), *args, **kwargs))
+		self.layers.append(Layer(input_shape = self.layers[-1].get_output_shape(), *args, **kwargs))
 		
 	def train(self, Xtr, Ytr, Xva, Yva, batch_size=32, epochs=1):
 		for epoch in range(epochs):
@@ -40,23 +40,29 @@ class NeuralNetwork:
 		for layer in self.layers:
 			inputs.append(propagate)
 			propagate = layer.forward_propagate(propagate)
+# 			print(propagate.shape)
 		return (propagate, inputs)
 		
 	def backward_propagate(self, labels, prediction, inputs):
 		propagate = self.loss.gradient(labels, prediction)
 		batch_size = labels.shape[0]
-		# store inputs for each layer in dict where {key = reference to layer : value = inputs}
-		delta_x = dict()
 		for i in range(len(self.layers) - 1, -1, -1):
 			layer = self.layers[i]
-			if isinstance(layer, Layer.WeightedLayer):
-				delta_x[layer] = -layer.compute_gradient_wrt_weight(inputs[i]).T.dot(propagate) * self.lr / batch_size
+			if isinstance(layer, Layer.FullyConnectedLayer):
+				delta_x = -layer.compute_gradient_wrt_weight(inputs[i]).T.dot(propagate) * self.lr / batch_size
+				delta_bias = -np.sum(layer.compute_gradient_wrt_bias()* propagate, axis = 0) * self.lr
 				propagate = propagate.dot(layer.gradient(inputs[i]).T) / propagate.shape[-1]
+				layer.increment_weights(delta_x)
+				layer.increment_biases(delta_bias)
+			elif isinstance(layer, Layer.ConvolutionalLayer):
+				delta_x = -layer.compute_gradient_wrt_weight(inputs[i], propagate) * self.lr
+				propagate = layer.gradient(inputs[i])
+				layer.increment_weights(delta_x)
+			elif isinstance(layer, Layer.FlattenLayer):
+				propagate = layer.gradient(inputs[i])
 			else:
 				propagate = propagate * layer.gradient(inputs[i])
-
-		for weighted_layer in delta_x:
-			weighted_layer.increment_weights(delta_x[weighted_layer])
+				
 				
 	def compute_acc(self, y_true, y_hat):
 		return metrics.accuracy_score(np.argmax(y_true, axis=1), np.argmax(y_hat, axis=1))
