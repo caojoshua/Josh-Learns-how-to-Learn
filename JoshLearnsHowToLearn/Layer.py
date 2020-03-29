@@ -1,7 +1,7 @@
 
 import math
 import numpy as np
-import utils
+from . import utils
 
 class Layer:
 	def __init__(self, input_shape):
@@ -149,7 +149,6 @@ class ConvolutionalLayer(WeightedLayer):
 		self.x_filter = filter_size[0]
 		self.y_filter = filter_size[1]
 		self.filters = np.random.random((num_filters, self.y_filter, self.x_filter, input_shape[-1])) * 2 - 1
-# 		self.filters = np.ones((num_filters, self.y_filter, self.x_filter, input_shape[-1]))
 		self.stride = stride
 		
 	def forward_propagate(self, x):
@@ -170,16 +169,18 @@ class ConvolutionalLayer(WeightedLayer):
 		return out
 	
 	
-	def gradient(self, x):
+	def gradient(self, x, propagate):
 		out = np.zeros((x.shape[0],) + self.input_shape)
-		return out
+		prop_sum = np.sum(propagate, axis = tuple(range(0, propagate.ndim - 1)))
+		prop_sum = np.reshape(prop_sum, newshape = prop_sum.shape + (1,) * 3)
 		curr_y = 0
-		filter_sum = np.sum(self.filters, axis = 0)
-		while curr_y <= x.shape[2] - self.y_filter:
+		filter_sum = self.filters * prop_sum
+		filter_sum = np.sum(filter_sum, axis = 0)
+		while curr_y <= x.shape[1] - self.y_filter:
 			curr_x = 0
-			while curr_x <= x.shape[1] - self.x_filter:
-				out[:, curr_x:curr_x + self.x_filter, 
-					curr_y:curr_y + self.y_filter] += filter_sum
+			while curr_x <= x.shape[2] - self.x_filter:
+				out[:, curr_y:curr_y + self.y_filter, 
+					curr_x:curr_x + self.x_filter] += filter_sum
 				curr_x += self.stride
 			curr_y += self.stride
 		return out
@@ -202,25 +203,6 @@ class ConvolutionalLayer(WeightedLayer):
 			curr_y += self.stride
 			out_y += 1
 		return out / x.shape[0]
-	
-	def compute_gradient_wrt_weight_(self, x):
-		out = np.zeros((x.shape[0],) + self.filters.shape)
-		x_reshaped = x[:,np.newaxis]
-		print(self.filters.shape)
-		print(out.shape)
-		print(x_reshaped.shape)
-		curr_y, out_y = 0, 0
-		while out_y < out.shape[2]:
-			curr_x, out_x = 0, 0
-			while out_x < out.shape[3]:
-# 				print(x_reshaped[:, :, out_y:out_y + self.y_filter, out_x:out_x + self.x_filter].shape)
-				out += x_reshaped[:, :, out_y:out_y + self.y_filter, out_x:out_x + self.x_filter]
-				out_x += 1
-				curr_x += self.stride
-			out_y += 1
-			curr_y += self.stride
-		return out
-		
 	
 	def increment_weights(self, offset):
 		self.filters

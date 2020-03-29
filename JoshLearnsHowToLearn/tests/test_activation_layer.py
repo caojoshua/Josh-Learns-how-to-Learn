@@ -1,8 +1,8 @@
 
 import unittest
-import Layer
+import JoshLearnsHowToLearn as jll
+from .. import DerivativeApproximation
 import numpy as np
-import DerivativeApproximation
 	
 ALL_ERROR_THRESHOLD = 1e-1
 MEAN_ERROR_THRESHOLD = 1e-3
@@ -17,7 +17,7 @@ def get_x():
 
 class TestRelu(unittest.TestCase):
 	def setUp(self):
-		self.relu = Layer.Relu(NUM_VARIABLES)
+		self.relu = jll.Layer.Relu(NUM_VARIABLES)
 		
 	def test_grad(self):
 		x = get_x()
@@ -58,7 +58,7 @@ class TestSoftmax(unittest.TestCase):
 		return grad_true[:,diag_index,diag_index] / h
 	
 	def setUp(self):
-		self.softmax = Layer.Softmax(NUM_VARIABLES)
+		self.softmax = jll.Layer.Softmax(NUM_VARIABLES)
 		
 	def test_grad(self):
 		x = get_x()

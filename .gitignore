@@ -1,5 +1,7 @@
 *.project
 *.pydevproject
 *__pycache__/
+*.pyc
 *ipynb_checkpoints/
-bust.py
+*.eggs
+JoshLearnsHowToLearn.egg-info

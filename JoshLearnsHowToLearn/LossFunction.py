@@ -1,6 +1,6 @@
 
 import numpy as np
-import DerivativeApproximation
+from . import DerivativeApproximation
 
 class LossFunction:
 	def __init__(self):

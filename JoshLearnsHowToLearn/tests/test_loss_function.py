@@ -1,9 +1,9 @@
 
 import unittest
-import LossFunction
+import JoshLearnsHowToLearn as jll
+from .. import DerivativeApproximation
 from sklearn.metrics import log_loss, mean_squared_error
 import numpy as np
-import DerivativeApproximation
 	
 ALL_ERROR_THRESHOLD = 1e-1
 MEAN_ERROR_THRESHOLD = 1e-3
@@ -11,8 +11,12 @@ MEAN_ERROR_THRESHOLD = 1e-3
 NUM_SAMPLES = 1000
 NUM_VARIABLES = 100
 	
-	
+
 def get_y_practicle():
+	"""
+	Practicle examples of categorical y_true. Shape is (NUM_SAMPLES x NUM_VARIABLES) and for 
+	each sample, one variable is 1, and the rest are 0
+	"""
 	y_true = np.zeros(shape=(NUM_SAMPLES, NUM_VARIABLES))
 	y_true[np.arange(NUM_SAMPLES), np.random.randint(low=0, high=NUM_VARIABLES, size=NUM_SAMPLES)] = 1
 	y_hat = np.random.rand(NUM_SAMPLES, NUM_VARIABLES)
@@ -22,7 +26,7 @@ def get_y_practicle():
 class TestMeanSquaredError(unittest.TestCase):
 	
 	def setUp(self):
-		self.mse = LossFunction.MeanSquaredError()
+		self.mse = jll.LossFunction.MeanSquaredError()
 	
 	def test_loss_practical(self):
 		y_true, y_hat = get_y_practicle()
@@ -49,7 +53,7 @@ class TestMeanSquaredError(unittest.TestCase):
 class TestCrossEntropy(unittest.TestCase):
 	
 	def setUp(self):
-		self.cross_entropy = LossFunction.CrossEntropy()
+		self.cross_entropy = jll.LossFunction.CrossEntropy()
 	
 	def test_loss_practical(self):
 		y_true, y_hat = get_y_practicle()
