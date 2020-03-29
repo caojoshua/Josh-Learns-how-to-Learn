@@ -1,0 +1,32 @@
+
+TODO
+
+	Disclaimer: This project was intended entirely for self learning and not public use, so the author will only implement
+	features if he feels it is worth the learning experience.
+
+	1. Biases for convolutional layer
+	
+	2. More activations e.g. sigmoid, tanh
+	
+	3. Code restructuring/clean up
+		
+		3.1 Layer gradient functions should update the propagation reference, rather than returning the gradient for that 
+			single layer. This way the back prop function won't have to handle cases where the back prop update isn't
+			a simple dot prod, like the flatten or fully connected layer
+			
+		3.2 Separate classes into different files, and move layers and loss functions into their own directories
+			
+	4. Weight initializers
+	
+	5. Unit tests for weighted layer gradients, since this is where there is most likely to be algorithmic incorrectness.
+
+**********************************
+
+Known Problems
+
+	1. The networks as a whole just does not work as well as Tensorflow. It could be that the package is algorithmically incorrect
+	   somewhere, or there is some nitty-gritty detail that Tensorflow implements that makes their models more accurate.
+	   
+	2. The cross entropy symbolic gradient fails its unit test check against the numerical gradient approximation, and performs
+	   poorly in practice. Currently cross entropy uses gradient approximation.
+   

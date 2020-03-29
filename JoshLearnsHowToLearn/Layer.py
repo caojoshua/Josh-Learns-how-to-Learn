@@ -170,6 +170,20 @@ class ConvolutionalLayer(WeightedLayer):
 	
 	
 	def gradient(self, x, propagate):
+		"""
+		Compute loss gradient wrt inputs
+		
+		Parameters:
+			x
+				inputs from previous layer of shape (n_samples, height, width, n_channels)
+			propagate
+				chain-ruled gradient propagation from loss function to the next layer
+				of shape (n_samples, new_height, new_width, n_filters) where 
+				new_height and new_width are the dimensions after accounting for
+				filter shape and stride length
+		Returns:
+			new chain-ruled gradient of shape (n_samples, width, height, n_channels)
+		"""
 		out = np.zeros((x.shape[0],) + self.input_shape)
 		prop_sum = np.sum(propagate, axis = tuple(range(0, propagate.ndim - 1)))
 		prop_sum = np.reshape(prop_sum, newshape = prop_sum.shape + (1,) * 3)
@@ -186,6 +200,20 @@ class ConvolutionalLayer(WeightedLayer):
 		return out
 	
 	def compute_gradient_wrt_weight(self, x, propagate):
+		"""
+		Compute loss gradient wrt weight
+		
+		Parameters:
+			x
+				inputs from previous layer of shape (n_samples, height, width, n_channels)
+			propagate
+				chain-ruled gradient propagation from loss function to the next layer
+				of shape (n_samples, new_height, new_width, n_filters) where 
+				new_height and new_width are the dimensions after accounting for
+				filter shape and stride length
+		Returns:
+			new chain-ruled gradient of shape (n_samples, filter_shape)
+		"""
 		out = np.zeros((x.shape[0],) + self.filters.shape)
 		prop = np.reshape(propagate, (propagate.shape[0], propagate.shape[1] * propagate.shape[2], propagate.shape[3]))
 		prop = np.swapaxes(prop, 1, 2)
@@ -207,7 +235,6 @@ class ConvolutionalLayer(WeightedLayer):
 	def increment_weights(self, offset):
 		self.filters
 		
-	
 	def get_output_shape(self):
 		return tuple((self.input_shape[0] - self.y_filter + 1, 
 					self.input_shape[1] - self.x_filter + 1, 
